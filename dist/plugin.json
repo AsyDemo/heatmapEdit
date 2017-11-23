@@ -1,0 +1,16 @@
+{
+  "type": "panel",
+  "name": "Heatmap-edited",
+  "id": "heatmap-two",
+
+  "info": {
+    "author": {
+      "name": "Grafana Project",
+      "url": "https://grafana.com"
+    },
+    "logos": {
+      "small": "img/icn-heatmap-panel.svg",
+      "large": "img/icn-heatmap-panel.svg"
+    }
+  }
+}
