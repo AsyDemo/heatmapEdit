@@ -1,5 +1,3 @@
-///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-
 export class HeatmapDisplayEditorCtrl {
   panel: any;
   panelCtrl: any;
@@ -20,7 +18,7 @@ export function heatmapDisplayEditor() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/app/plugins/panel/heatmap/partials/display_editor.html',
+    templateUrl: 'public/plugins/heatmap-two/partials/display_editor.html',
     controller: HeatmapDisplayEditorCtrl,
   };
 }

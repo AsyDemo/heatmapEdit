@@ -1,6 +1,4 @@
-///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-
-import kbn from 'app/core/utils/kbn';
+import kbn from 'grafana/app/core/utils/kbn';
 
 export class AxesEditorCtrl {
   panel: any;
@@ -17,16 +15,16 @@ export class AxesEditorCtrl {
     this.unitFormats = kbn.getUnitFormats();
 
     this.logScales = {
-      'linear': 1,
+      linear: 1,
       'log (base 2)': 2,
       'log (base 10)': 10,
       'log (base 32)': 32,
-      'log (base 1024)': 1024
+      'log (base 1024)': 1024,
     };
 
     this.dataFormats = {
       'Time series': 'timeseries',
-      'Time series buckets': 'tsbuckets'
+      'Time series buckets': 'tsbuckets',
     };
   }
 
@@ -42,7 +40,7 @@ export function axesEditor() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/app/plugins/panel/heatmap/partials/axes_editor.html',
+    templateUrl: 'public/plugins/heatmap-two/partials/axes_editor.html',
     controller: AxesEditorCtrl,
   };
 }

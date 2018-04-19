@@ -1,6 +1,3 @@
-///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
-
-
 import _ from 'lodash';
 
 let VALUE_INDEX = 0;
@@ -35,10 +32,19 @@ function elasticHistogramToHeatmap(seriesList) {
 
       let bucket = heatmap[time];
       if (!bucket) {
-        bucket = heatmap[time] = {x: time, buckets: {}};
+        bucket = heatmap[time] = { x: time, buckets: {} };
       }
 
-      bucket.buckets[bound] = {y: bound, count: count, values: [], points: []};
+      bucket.buckets[bound] = {
+        y: bound,
+        count: count,
+        bounds: {
+          top: null,
+          bottom: bound,
+        },
+        values: [],
+        points: [],
+      };
     }
   }
 
@@ -51,10 +57,11 @@ function elasticHistogramToHeatmap(seriesList) {
  * @return {Array}          Array of "card" objects
  */
 function convertToCards(buckets) {
-  let min = 0, max = 0;
+  let min = 0,
+    max = 0;
   let cards = [];
   _.forEach(buckets, xBucket => {
-    _.forEach(xBucket.buckets, yBucket=> {
+    _.forEach(xBucket.buckets, yBucket => {
       let card = {
         x: xBucket.x,
         y: yBucket.y,
@@ -74,8 +81,8 @@ function convertToCards(buckets) {
     });
   });
 
-  let cardStats = {min, max};
-  return {cards, cardStats};
+  let cardStats = { min, max };
+  return { cards, cardStats };
 }
 
 /**
@@ -100,7 +107,7 @@ function mergeZeroBuckets(buckets, minValue) {
     let yBuckets = xBucket.buckets;
 
     let emptyBucket = {
-      bounds: {bottom: 0, top: 0},
+      bounds: { bottom: 0, top: 0 },
       values: [],
       points: [],
       count: 0,
@@ -111,7 +118,7 @@ function mergeZeroBuckets(buckets, minValue) {
 
     let newBucket = {
       y: 0,
-      bounds: {bottom: minValue, top: minBucket.bounds.top || minValue},
+      bounds: { bottom: minValue, top: minBucket.bounds.top || minValue },
       values: [],
       points: [],
       count: 0,
@@ -133,8 +140,8 @@ function mergeZeroBuckets(buckets, minValue) {
 }
 
 /**
-   * Convert set of time series into heatmap buckets
-   * @return {Object}    Heatmap object:
+ * Convert set of time series into heatmap buckets
+ * @return {Object}    Heatmap object:
  * {
  *   xBucketBound_1: {
  *     x: xBucketBound_1,
@@ -164,7 +171,7 @@ function mergeZeroBuckets(buckets, minValue) {
 function convertToHeatMap(seriesList, yBucketSize, xBucketSize, logBase = 1) {
   let heatmap = {};
 
-  for (var series of seriesList) {
+  for (let series of seriesList) {
     let datapoints = series.datapoints;
     var seriesName = series.label;
 
@@ -199,7 +206,9 @@ function convertToHeatMap(seriesList, yBucketSize, xBucketSize, logBase = 1) {
 
 function pushToXBuckets(buckets, point, bucketNum, seriesName) {
   let value = point[VALUE_INDEX];
-  if (value === null || value === undefined || isNaN(value)) { return; }
+  if (value === null || value === undefined || isNaN(value)) {
+    return;
+  }
 
   // Add series name to point for future identification
   let point_ext = _.concat(point, seriesName);
@@ -211,7 +220,7 @@ function pushToXBuckets(buckets, point, bucketNum, seriesName) {
     buckets[bucketNum] = {
       x: bucketNum,
       values: [value],
-      points: [point_ext]
+      points: [point_ext],
     };
   }
 }
@@ -253,7 +262,7 @@ function getBucketBounds(value, bucketSize) {
   bottom = Math.floor(value / bucketSize) * bucketSize;
   top = (Math.floor(value / bucketSize) + 1) * bucketSize;
 
-  return {bottom, top};
+  return { bottom, top };
 }
 
 function getBucketBound(value, bucketSize) {
@@ -281,7 +290,7 @@ function convertToValueBuckets(xBucket, bucketSize) {
 function getLogScaleBucketBounds(value, yBucketSplitFactor, logBase) {
   let top, bottom;
   if (value === 0) {
-    return {bottom: 0, top: 0};
+    return { bottom: 0, top: 0 };
   }
 
   let value_log = logp(value, logBase);
@@ -299,7 +308,7 @@ function getLogScaleBucketBounds(value, yBucketSplitFactor, logBase) {
   bottom = Math.pow(logBase, pow);
   top = Math.pow(logBase, powTop);
 
-  return {bottom, top};
+  return { bottom, top };
 }
 
 function getLogScaleBucketBound(value, yBucketSplitFactor, logBase) {
@@ -319,12 +328,6 @@ function convertToLogScaleValueBuckets(xBucket, yBucketSplitFactor, logBase) {
   });
 
   return buckets;
-}
-
-// Get minimum non zero value.
-function getMinLog(series) {
-  let values = _.compact(_.map(series.datapoints, p => p[0]));
-  return _.min(values);
 }
 
 /**
@@ -433,8 +436,7 @@ export {
   elasticHistogramToHeatmap,
   convertToCards,
   mergeZeroBuckets,
-  getMinLog,
   getValueBucketBound,
   isHeatmapDataEqual,
-  calculateBucketSize
+  calculateBucketSize,
 };

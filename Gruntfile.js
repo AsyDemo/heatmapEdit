@@ -34,6 +34,12 @@ module.exports = function(grunt) {
         flatten: true,
         src: ['plugin.json', 'README.md'],
         dest: 'dist/'
+      },
+      externals: {
+        cwd: 'src',
+        expand: true,
+        src: ['**/libs/*'],
+        dest: 'dist'
       }
     },
 
@@ -84,6 +90,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'clean',
     'copy:dist_js',
+    'copy:externals',
     'babel',
     'typescript:build',
     'copy:dist_html',
